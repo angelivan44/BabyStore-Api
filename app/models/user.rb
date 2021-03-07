@@ -1,6 +1,7 @@
 class User < ApplicationRecord
   has_secure_password
   has_secure_token
+  attribute :role, :string, default: "user"
   validates :username, presence: true, uniqueness: true
   has_many :favoritable , source: :favoritable, class_name: 'Favoritable'
   has_many :favorites , through: :favoritable , source: :clothe, class_name: 'Clothe'
