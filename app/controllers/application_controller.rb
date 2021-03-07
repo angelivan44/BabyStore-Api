@@ -1,4 +1,7 @@
 class ApplicationController < ActionController::API
+  rescue_from Pundit::NotAuthorizedError do |e|
+    render json: {message: e.message} , status: :unauthorized
+  end
   include ActionController::HttpAuthentication::Token::ControllerMethods
   before_action :require_login
 

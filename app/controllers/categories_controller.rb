@@ -1,8 +1,10 @@
 class CategoriesController < ApplicationController
-  skip_before_action :require_login
+  skip_before_action :require_login , only: %i[index , show ]
   before_action :current_category, only: %i[create, update, destroy, show]
+  include Pundit
   def create
     category = Category.new(category_params)
+    authorize category
     if category.save
       render json: category , status: :ok
     else
@@ -11,6 +13,7 @@ class CategoriesController < ApplicationController
   end
 
   def update
+    authorize current_category
     if current_category.update(category_params)
       render json: current_category , status: :ok
     else
@@ -19,6 +22,7 @@ class CategoriesController < ApplicationController
   end
 
   def destroy
+    authorize current_category
     if current_category.delete
       render json: {message: "category was deleting"}
     else
@@ -32,7 +36,7 @@ class CategoriesController < ApplicationController
 
   def index
     categories = Category.all
-    render json: categories
+    render json:  categories.map {|category| category.as_json(methods: :service_url) }
   end
 
   def current_category
