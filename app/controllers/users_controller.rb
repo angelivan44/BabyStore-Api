@@ -3,17 +3,33 @@ class UsersController < ApplicationController
   def create
     user = User.new(user_params)
     if user.save
-      render json: user
+      render json: user.to_json(include: [{favorites: {methods: :service_url}},{wants: {methods: :service_url}}, {buys: {methods: :service_url}}])
     else
       render json: user.errors, status: :unprocessable_entity
     end
   end
 
   def update
-    if current_user.update(user_params)
-      render json: current_user
+
+    favorite = Clothe.find(params[:favorit])
+
+    if favorite
+      match = current_user.favorites.find{|fa| fa.id == favorite.id.to_i}
+      if match
+        newFavorites = current_user.favorites.filter{|fa| fa.id != favorite.id.to_i}
+        current_user.favorites = newFavorites
+      else
+        current_user.favorites.push(favorite)
+      end
+    end
+    if !params[:favorit]
+      if current_user.update(user_params)
+        render json: current_user.to_json(include: [{favorites: {methods: :service_url}},{wants: {methods: :service_url}}, {buys: {methods: :service_url}}])
+      else
+        render json: current_user.errors , status: :unprocessable_entity
+      end
     else
-      render json: current_user.errors , status: :unprocessable_entity
+      render json: current_user.to_json(include: [{favorites: {methods: :service_url}},{wants: {methods: :service_url}}, {buys: {methods: :service_url}}])
     end
   end
 
@@ -25,9 +41,9 @@ class UsersController < ApplicationController
     end
   end
   def show
-    render json: current_user
+    render json: current_user.to_json(include: [{favorites: {methods: :service_url}},{wants: {methods: :service_url}}, {buys: {methods: :service_url}}])
   end
   def user_params
-    params.permit(:username, :password, :mail)
+    params.permit(:username, :password, :mail ,:favorit , :want , :buy)
   end
 end

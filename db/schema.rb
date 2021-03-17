@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_07_143305) do
+ActiveRecord::Schema.define(version: 2021_03_16_195149) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -51,6 +51,7 @@ ActiveRecord::Schema.define(version: 2021_03_07_143305) do
     t.integer "clothes_count"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "position"
   end
 
   create_table "clothes", force: :cascade do |t|
@@ -62,6 +63,9 @@ ActiveRecord::Schema.define(version: 2021_03_07_143305) do
     t.bigint "category_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "position"
+    t.string "status"
+    t.decimal "oldprice"
     t.index ["category_id"], name: "index_clothes_on_category_id"
   end
 

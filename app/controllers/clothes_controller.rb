@@ -2,14 +2,13 @@ class ClothesController < ApplicationController
   skip_before_action :require_login, only: %i[index , show ]
   before_action :current_clothe, only: %i[create, update, destroy, show]
   include Pundit
-
   def index
     clothes = Clothe.all
-    render json: clothes.map{|clothe| clothe.as_json(methods: :service_url) }
+    render json: clothes.map{|clothe| clothe.as_json(methods: :service_url , include: :images) }
   end
 
   def show
-    render json: current_clothe.as_json(methods: :service_url), status: :ok
+    render json: current_clothe.as_json(methods: :service_url , include: :images), status: :ok
   end
 
   def create
@@ -18,7 +17,7 @@ class ClothesController < ApplicationController
     clothe.category = category
     authorize clothe
     if clothe.save
-      render json: clothe , status: :ok
+      render json: clothe.as_json(methods: :service_url, include: :images) , status: :ok
     else
       render json: clothe.errors , status: :unprocessable_entity
     end
@@ -27,7 +26,7 @@ class ClothesController < ApplicationController
   def update
     authorize current_clothe
     if current_clothe.update(clothe_params)
-      render json: current_clothe , status: :ok
+      render json: current_clothe.as_json(methods: :service_url, include: :images), status: :ok
     else
       render json: current_clothe.errors , status: :unprocessable_entity
     end
@@ -35,8 +34,11 @@ class ClothesController < ApplicationController
 
   def destroy
     authorize current_clothe
-    current_clothe.delete
-    render json: {message: "clothe was deleting"}
+    if current_clothe.delete
+      render json: {message: "ok"}
+    else 
+      render json: {message: "we can't delete this clothe"}
+    end
   end
 
   def current_clothe
@@ -46,7 +48,7 @@ class ClothesController < ApplicationController
   private
 
   def clothe_params
-    params.permit(:name , :price , :size , :brand , :stock , :images )
+    params.require(:clothe).permit(:name , :price, :oldprice , :size , :brand , :status, :position , :images )
   end
 
 end

@@ -15,8 +15,8 @@ class User < ApplicationRecord
     update(token: nil)
   end
 
-  def self.valid_login?(username, password)
-    user = find_by(username: username)
+  def self.valid_login?(mail, password)
+    user = find_by(mail: mail)
     user if user&.authenticate(password)
   end
 end

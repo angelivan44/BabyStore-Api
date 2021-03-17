@@ -10,11 +10,14 @@ user2 = User.create(username:"angel2", password:"123456")
 firstClothe = Clothe.new(name:"falda")
 secondClothe = Clothe.new(name:"camisa")
 thirthClothe = Clothe.new(name:"pantalon")
-
+p "aaaaaaaaaa"
 firstClothe.images.attach(io: File.open('app/assets/images/camisa.jpeg'), filename: 'camisa.jpeg')
+p firstClothe.errors
+
 secondClothe.images.attach(io: File.open('app/assets/images/falda.jpeg'), filename: 'falda.jpeg')
 thirthClothe.images.attach(io: File.open('app/assets/images/pantalon.jpg'), filename: 'pantalon.jpg')
 firstClothe.images.attach(io: File.open('app/assets/images/pantalon.jpg'), filename: 'pantalon.jpg')
+
 
 
 oneCategory = Category.create(name:"fitness")

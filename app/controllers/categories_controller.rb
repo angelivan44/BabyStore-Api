@@ -15,7 +15,7 @@ class CategoriesController < ApplicationController
   def update
     authorize current_category
     if current_category.update(category_params)
-      render json: current_category , status: :ok
+      render json: current_category.to_json(methods: :service_url)
     else
       render json: current_category.errors ,status: :unprocessable_entity
     end
@@ -24,7 +24,7 @@ class CategoriesController < ApplicationController
   def destroy
     authorize current_category
     if current_category.delete
-      render json: {message: "category was deleting"}
+      render json: {message: "ok"}
     else
       render json: {message: "we cant delete category"}
     end
@@ -44,7 +44,7 @@ class CategoriesController < ApplicationController
   end
   private
   def category_params
-    params.permit(:name, :color , :cover)
+    params.require(:category).permit(:name, :color, :position , :cover)
   end
 
 end
